@@ -23,7 +23,11 @@ export default async function handler(
     const clientIp = req.headers['x-forwarded-for'] ?? "127.0.0.1";
     const addCount = await actionCount(clientIp as string, "add");
     const updateCount = await actionCount(clientIp as string, "update");
-    const tasks = await prisma.task.findMany();
+    const tasks = await prisma.task.findMany({
+      where: {
+        ipAddress: clientIp as string,
+      }
+    });
 
     res.status(200).json({ tasks, addCount, updateCount, status: true });
   }
